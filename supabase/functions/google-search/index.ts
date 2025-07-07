@@ -39,7 +39,7 @@ serve(async (req) => {
       .select('*')
       .eq('input_type', inputType)
       .eq('input_value', inputValue)
-      .single()
+      .maybeSingle()
 
     if (existingScan) {
       // Return existing scan result

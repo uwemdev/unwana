@@ -47,10 +47,10 @@ export default function ResultsDisplay({ result }: ResultsDisplayProps) {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full max-w-3xl mx-auto glass-card">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <span>Security Analysis Results</span>
+          <span className="sunlight-glow">Security Analysis Results</span>
           <Badge className={`${getRiskColor(result.riskLevel)} flex items-center gap-2`}>
             {getRiskIcon(result.riskLevel)}
             {getRiskText(result.riskLevel)}

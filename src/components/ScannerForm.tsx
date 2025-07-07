@@ -28,9 +28,9 @@ export default function ScannerForm({ onScan, isScanning }: ScannerFormProps) {
   ];
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full max-w-3xl mx-auto glass-card">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">Crypto Security Scanner</CardTitle>
+        <CardTitle className="text-2xl font-bold sunlight-glow">Crypto Security Scanner</CardTitle>
         <CardDescription>
           Analyze wallet addresses, token contracts, and DApps for potential security risks
         </CardDescription>
@@ -71,7 +71,7 @@ export default function ScannerForm({ onScan, isScanning }: ScannerFormProps) {
           
           <Button
             type="submit"
-            className="w-full h-12 text-lg"
+            className="w-full h-12 text-lg glass-button sunlight-glow"
             disabled={!address.trim() || isScanning}
           >
             {isScanning ? "Scanning..." : "Scan for Security Risks"}

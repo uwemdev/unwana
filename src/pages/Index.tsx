@@ -160,16 +160,16 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative py-20 px-4">
-        <div className="relative z-10 container mx-auto text-center space-y-8">
+      <section className="relative py-12 px-2 sm:px-4">
+        <div className="relative z-10 container mx-auto text-center space-y-8 max-w-7xl">
           <div className="space-y-6">
             <div className="flex items-center justify-center">
               <img 
                 src={logoImage} 
-                alt="ICP25 Hackathon Logo" 
-                className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48"
+                alt="Unwana Logo" 
+                className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64 sunlight-glow"
               />
             </div>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
@@ -177,28 +177,28 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <Card className="bg-card/50 backdrop-blur-sm border-yellow-400/20 hover:border-yellow-400/40 transition-colors">
-              <CardContent className="p-6 text-center">
-                <h3 className="font-semibold text-lg mb-2 text-yellow-400">Real-time Scanning</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
+            <Card className="glass-card hover:border-yellow-400/40 transition-all duration-300 hover:transform hover:scale-105">
+              <CardContent className="p-4 sm:p-6 text-center">
+                <h3 className="font-semibold text-lg mb-2 text-yellow-400 sunlight-glow">Real-time Scanning</h3>
                 <p className="text-sm text-muted-foreground">
                   Instant analysis of wallet addresses, token contracts, and DApps
                 </p>
               </CardContent>
             </Card>
             
-            <Card className="bg-card/50 backdrop-blur-sm border-amber-500/20 hover:border-amber-500/40 transition-colors">
-              <CardContent className="p-6 text-center">
-                <h3 className="font-semibold text-lg mb-2 text-amber-500">Community Driven</h3>
+            <Card className="glass-card hover:border-amber-500/40 transition-all duration-300 hover:transform hover:scale-105">
+              <CardContent className="p-4 sm:p-6 text-center">
+                <h3 className="font-semibold text-lg mb-2 text-amber-500 sunlight-glow">Community Driven</h3>
                 <p className="text-sm text-muted-foreground">
                   Powered by community reports and decentralized reputation scoring
                 </p>
               </CardContent>
             </Card>
             
-            <Card className="bg-card/50 backdrop-blur-sm border-orange-500/20 hover:border-orange-500/40 transition-colors">
-              <CardContent className="p-6 text-center">
-                <h3 className="font-semibold text-lg mb-2 text-orange-500">ICP Blockchain</h3>
+            <Card className="glass-card hover:border-orange-500/40 transition-all duration-300 hover:transform hover:scale-105">
+              <CardContent className="p-4 sm:p-6 text-center">
+                <h3 className="font-semibold text-lg mb-2 text-orange-500 sunlight-glow">ICP Blockchain</h3>
                 <p className="text-sm text-muted-foreground">
                   Secure, transparent, and immutable security data storage
                 </p>
@@ -209,15 +209,15 @@ const Index = () => {
       </section>
 
       {/* Wallet Connection Section */}
-      <section className="py-8 px-4">
-        <div className="container mx-auto">
+      <section className="py-6 px-2 sm:px-4">
+        <div className="container mx-auto max-w-6xl">
           <WalletConnection />
         </div>
       </section>
 
       {/* Scanner Section */}
-      <section className="py-12 px-4">
-        <div className="container mx-auto space-y-8">
+      <section className="py-8 px-2 sm:px-4">
+        <div className="container mx-auto space-y-8 max-w-6xl">
           <ScannerForm onScan={handleScan} isScanning={isScanning} />
           
           {isScanning && (

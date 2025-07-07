@@ -56,10 +56,18 @@ All colors MUST be HSL.
     --gradient-safe: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 46%));
     --gradient-danger: linear-gradient(135deg, hsl(0 84% 60%), hsl(0 84% 50%));
     --gradient-logo: linear-gradient(135deg, hsl(45 93% 58%), hsl(43 96% 56%), hsl(25 95% 53%));
+    
+    /* Sunlight/Glow Effects */
+    --sunlight-glow: radial-gradient(ellipse at center, hsl(45 100% 70% / 0.3) 0%, hsl(45 100% 50% / 0.1) 50%, transparent 100%);
+    --liquid-glass: backdrop-filter: blur(20px) saturate(200%);
+    --glass-border: 1px solid hsl(255 255% 255% / 0.125);
+    --glass-shadow: 0 8px 32px 0 hsl(0 0% 0% / 0.37);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --animation-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    --animation-glow: glow 3s ease-in-out infinite alternate;
+    --animation-float: float 6s ease-in-out infinite;
 
     --radius: 0.5rem;
 
@@ -120,5 +128,55 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    position: relative;
   }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: var(--sunlight-glow);
+    animation: var(--animation-float);
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+@keyframes glow {
+  0% { filter: brightness(1) drop-shadow(0 0 20px hsl(45 100% 70% / 0.4)); }
+  100% { filter: brightness(1.2) drop-shadow(0 0 40px hsl(45 100% 70% / 0.6)); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(30px, -30px) rotate(120deg); }
+  66% { transform: translate(-20px, 20px) rotate(240deg); }
+}
+
+/* Liquid Glass Effect Classes */
+.glass-card {
+  background: hsl(255 255% 255% / 0.1);
+  backdrop-filter: blur(20px) saturate(200%);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-button {
+  background: hsl(255 255% 255% / 0.2);
+  backdrop-filter: blur(10px) saturate(180%);
+  border: 1px solid hsl(255 255% 255% / 0.2);
+  transition: all 0.3s ease;
+}
+
+.glass-button:hover {
+  background: hsl(255 255% 255% / 0.3);
+  border-color: hsl(255 255% 255% / 0.4);
+  transform: translateY(-2px);
+}
+
+.sunlight-glow {
+  animation: var(--animation-glow);
 }
