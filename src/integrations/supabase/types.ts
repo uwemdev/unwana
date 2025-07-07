@@ -14,16 +14,225 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      comments: {
+        Row: {
+          comment_text: string
+          created_at: string
+          id: string
+          scan_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment_text: string
+          created_at?: string
+          id?: string
+          scan_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment_text?: string
+          created_at?: string
+          id?: string
+          scan_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "search_results"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      search_results: {
+        Row: {
+          created_at: string
+          flagged_keywords: string[] | null
+          google_snippets: Json | null
+          id: string
+          input_type: Database["public"]["Enums"]["input_type"]
+          input_value: string
+          is_flagged: boolean | null
+          result_summary: string | null
+          risk_score: number | null
+          scan_status: Database["public"]["Enums"]["scan_status"] | null
+          scan_time: string
+          submitted_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          flagged_keywords?: string[] | null
+          google_snippets?: Json | null
+          id?: string
+          input_type: Database["public"]["Enums"]["input_type"]
+          input_value: string
+          is_flagged?: boolean | null
+          result_summary?: string | null
+          risk_score?: number | null
+          scan_status?: Database["public"]["Enums"]["scan_status"] | null
+          scan_time?: string
+          submitted_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          flagged_keywords?: string[] | null
+          google_snippets?: Json | null
+          id?: string
+          input_type?: Database["public"]["Enums"]["input_type"]
+          input_value?: string
+          is_flagged?: boolean | null
+          result_summary?: string | null
+          risk_score?: number | null
+          scan_status?: Database["public"]["Enums"]["scan_status"] | null
+          scan_time?: string
+          submitted_by?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "search_results_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          wallet_address: string
+          wallet_type: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          wallet_address: string
+          wallet_type?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          wallet_address?: string
+          wallet_type?: string
+        }
+        Relationships: []
+      }
+      votes: {
+        Row: {
+          created_at: string
+          id: string
+          scan_id: string
+          updated_at: string
+          user_id: string
+          vote_type: Database["public"]["Enums"]["vote_type"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          scan_id: string
+          updated_at?: string
+          user_id: string
+          vote_type: Database["public"]["Enums"]["vote_type"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          scan_id?: string
+          updated_at?: string
+          user_id?: string
+          vote_type?: Database["public"]["Enums"]["vote_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "votes_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "search_results"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallet_sessions: {
+        Row: {
+          id: string
+          ip_address: unknown | null
+          session_end: string | null
+          session_start: string
+          user_agent: string | null
+          user_id: string
+          wallet_address: string
+        }
+        Insert: {
+          id?: string
+          ip_address?: unknown | null
+          session_end?: string | null
+          session_start?: string
+          user_agent?: string | null
+          user_id: string
+          wallet_address: string
+        }
+        Update: {
+          id?: string
+          ip_address?: unknown | null
+          session_end?: string | null
+          session_start?: string
+          user_agent?: string | null
+          user_id?: string
+          wallet_address?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_risk_score: {
+        Args: { scan_id: string }
+        Returns: number
+      }
     }
     Enums: {
-      [_ in never]: never
+      input_type: "wallet" | "token" | "dapp"
+      scan_status: "safe" | "scam" | "suspicious" | "pending"
+      vote_type: "safe" | "scam" | "unsure"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +359,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      input_type: ["wallet", "token", "dapp"],
+      scan_status: ["safe", "scam", "suspicious", "pending"],
+      vote_type: ["safe", "scam", "unsure"],
+    },
   },
 } as const

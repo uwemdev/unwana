@@ -1,9 +1,10 @@
 import { useState } from "react";
 import ScannerForm from "@/components/ScannerForm";
 import ResultsDisplay from "@/components/ResultsDisplay";
-import ReputationScore from "@/components/ReputationScore";
-import CommunityReports from "@/components/CommunityReports";
+import WalletConnection from "@/components/WalletConnection";
+import ScanHistory from "@/components/ScanHistory";
 import { Card, CardContent } from "@/components/ui/card";
+import { useScanHistory } from "@/hooks/useScanHistory";
 import heroImage from "@/assets/crypto-security-hero.jpg";
 
 interface ScanResult {
@@ -27,24 +28,40 @@ interface ReputationData {
 const Index = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
-  const [reputation, setReputation] = useState<ReputationData | null>(null);
-  const [currentAddress, setCurrentAddress] = useState("");
+  const [currentScanId, setCurrentScanId] = useState<string | null>(null);
+  const { performScan } = useScanHistory();
 
   const handleScan = async (address: string, type: string) => {
     setIsScanning(true);
-    setCurrentAddress(address);
     setScanResult(null);
-    setReputation(null);
+    setCurrentScanId(null);
 
-    // Simulate API call with different results based on address
-    setTimeout(() => {
-      const mockResult = generateMockResult(address, type);
-      const mockReputation = generateMockReputation(address);
-      
-      setScanResult(mockResult);
-      setReputation(mockReputation);
+    try {
+      const result = await performScan(type, address);
+      if (result) {
+        // Convert database result to component format
+        const convertedResult: ScanResult = {
+          address: result.input_value,
+          type: result.input_type,
+          riskLevel: result.scan_status === 'safe' ? 'safe' : 
+                    result.scan_status === 'scam' ? 'danger' : 'warning',
+          score: result.risk_score || 0,
+          issues: result.flagged_keywords || [],
+          recommendations: result.scan_status === 'scam' 
+            ? ["DO NOT interact with this address", "Report to relevant authorities"]
+            : result.scan_status === 'suspicious'
+            ? ["Proceed with extreme caution", "Research thoroughly before interacting"]
+            : ["Address appears legitimate", "Continue monitoring for any changes"]
+        };
+        
+        setScanResult(convertedResult);
+        setCurrentScanId(result.id);
+      }
+    } catch (error) {
+      console.error("Scan failed:", error);
+    } finally {
       setIsScanning(false);
-    }, 2000);
+    }
   };
 
   const generateMockResult = (address: string, type: string): ScanResult => {
@@ -152,7 +169,7 @@ const Index = () => {
         <div className="relative z-10 container mx-auto text-center space-y-8">
           <div className="space-y-4">
             <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Crypto Guardian Eye
+              Unwana
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
               Advanced blockchain security scanner powered by ICP. Detect scams, analyze wallet behavior, and protect your crypto assets.
@@ -190,6 +207,13 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Wallet Connection Section */}
+      <section className="py-8 px-4">
+        <div className="container mx-auto">
+          <WalletConnection />
+        </div>
+      </section>
+
       {/* Scanner Section */}
       <section className="py-12 px-4">
         <div className="container mx-auto space-y-8">
@@ -199,7 +223,7 @@ const Index = () => {
             <div className="text-center space-y-4">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
                 <div className="w-4 h-4 bg-primary rounded-full animate-pulse" />
-                <span className="text-sm font-medium">Analyzing security patterns...</span>
+                <span className="text-sm font-medium">Analyzing security patterns with ICP...</span>
               </div>
             </div>
           )}
@@ -207,10 +231,11 @@ const Index = () => {
           {scanResult && (
             <div className="space-y-8">
               <ResultsDisplay result={scanResult} />
-              <ReputationScore reputation={reputation} />
-              <CommunityReports address={currentAddress} />
             </div>
           )}
+
+          {/* Scan History Section */}
+          <ScanHistory currentScanId={currentScanId} />
         </div>
       </section>
     </div>
