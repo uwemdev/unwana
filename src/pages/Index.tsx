@@ -165,15 +165,12 @@ const Index = () => {
       <section className="relative py-20 px-4">
         <div className="relative z-10 container mx-auto text-center space-y-8">
           <div className="space-y-6">
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center justify-center">
               <img 
                 src={logoImage} 
                 alt="ICP25 Hackathon Logo" 
-                className="w-16 h-16 md:w-24 md:h-24"
+                className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48"
               />
-              <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500 bg-clip-text text-transparent">
-                Unwana
-              </h1>
             </div>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
               Advanced blockchain security scanner powered by ICP. Detect scams, analyze wallet behavior, and protect your crypto assets.
