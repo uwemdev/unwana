@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -17,8 +18,8 @@ All colors MUST be HSL.
     --popover: 220 13% 11%;
     --popover-foreground: 220 9% 96%;
 
-    --primary: 259 94% 51%;
-    --primary-foreground: 220 9% 96%;
+    --primary: 45 93% 58%;
+    --primary-foreground: 220 13% 9%;
 
     --secondary: 220 13% 15%;
     --secondary-foreground: 220 9% 96%;
@@ -26,29 +27,35 @@ All colors MUST be HSL.
     --muted: 220 13% 15%;
     --muted-foreground: 220 9% 65%;
 
-    --accent: 259 94% 51%;
-    --accent-foreground: 220 9% 96%;
+    --accent: 43 96% 56%;
+    --accent-foreground: 220 13% 9%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 220 9% 96%;
 
     --border: 220 13% 18%;
     --input: 220 13% 15%;
-    --ring: 259 94% 51%;
+    --ring: 45 93% 58%;
 
     /* Security Status Colors */
     --safe: 142 76% 36%;
     --safe-foreground: 220 9% 96%;
-    --warning: 48 96% 53%;
+    --warning: 45 93% 58%;
     --warning-foreground: 220 13% 9%;
     --danger: 0 84% 60%;
     --danger-foreground: 220 9% 96%;
 
+    /* Logo-inspired colors */
+    --logo-yellow: 45 93% 58%;
+    --logo-amber: 43 96% 56%;
+    --logo-orange: 25 95% 53%;
+
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(259 94% 51%), hsl(259 94% 41%));
+    --gradient-primary: linear-gradient(135deg, hsl(45 93% 58%), hsl(43 96% 56%));
     --gradient-security: linear-gradient(135deg, hsl(220 13% 11%), hsl(220 13% 15%));
     --gradient-safe: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 46%));
     --gradient-danger: linear-gradient(135deg, hsl(0 84% 60%), hsl(0 84% 50%));
+    --gradient-logo: linear-gradient(135deg, hsl(45 93% 58%), hsl(43 96% 56%), hsl(25 95% 53%));
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -57,19 +64,12 @@ All colors MUST be HSL.
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -83,8 +83,8 @@ All colors MUST be HSL.
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 45 93% 58%;
+    --primary-foreground: 222.2 84% 4.9%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -92,23 +92,24 @@ All colors MUST be HSL.
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 43 96% 56%;
+    --accent-foreground: 222.2 84% 4.9%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --ring: 45 93% 58%;
+
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-primary: 45 93% 58%;
+    --sidebar-primary-foreground: 240 5.9% 10%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 45 93% 58%;
   }
 }
 

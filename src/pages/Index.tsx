@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import ScannerForm from "@/components/ScannerForm";
 import ResultsDisplay from "@/components/ResultsDisplay";
@@ -5,7 +6,7 @@ import WalletConnection from "@/components/WalletConnection";
 import ScanHistory from "@/components/ScanHistory";
 import { Card, CardContent } from "@/components/ui/card";
 import { useScanHistory } from "@/hooks/useScanHistory";
-import heroImage from "@/assets/crypto-security-hero.jpg";
+import logoImage from "/lovable-uploads/372289b9-f24a-4330-b95c-b5cfb3c7c5af.png";
 
 interface ScanResult {
   address: string;
@@ -162,42 +163,45 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative py-20 px-4">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-10"
-          style={{ backgroundImage: `url(${heroImage})` }}
-        />
         <div className="relative z-10 container mx-auto text-center space-y-8">
-          <div className="space-y-4">
-            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Unwana
-            </h1>
+          <div className="space-y-6">
+            <div className="flex items-center justify-center gap-4">
+              <img 
+                src={logoImage} 
+                alt="ICP25 Hackathon Logo" 
+                className="w-16 h-16 md:w-24 md:h-24"
+              />
+              <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500 bg-clip-text text-transparent">
+                Unwana
+              </h1>
+            </div>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
               Advanced blockchain security scanner powered by ICP. Detect scams, analyze wallet behavior, and protect your crypto assets.
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <Card className="bg-card/50 backdrop-blur-sm border-primary/20">
+            <Card className="bg-card/50 backdrop-blur-sm border-yellow-400/20 hover:border-yellow-400/40 transition-colors">
               <CardContent className="p-6 text-center">
-                <h3 className="font-semibold text-lg mb-2">Real-time Scanning</h3>
+                <h3 className="font-semibold text-lg mb-2 text-yellow-400">Real-time Scanning</h3>
                 <p className="text-sm text-muted-foreground">
                   Instant analysis of wallet addresses, token contracts, and DApps
                 </p>
               </CardContent>
             </Card>
             
-            <Card className="bg-card/50 backdrop-blur-sm border-primary/20">
+            <Card className="bg-card/50 backdrop-blur-sm border-amber-500/20 hover:border-amber-500/40 transition-colors">
               <CardContent className="p-6 text-center">
-                <h3 className="font-semibold text-lg mb-2">Community Driven</h3>
+                <h3 className="font-semibold text-lg mb-2 text-amber-500">Community Driven</h3>
                 <p className="text-sm text-muted-foreground">
                   Powered by community reports and decentralized reputation scoring
                 </p>
               </CardContent>
             </Card>
             
-            <Card className="bg-card/50 backdrop-blur-sm border-primary/20">
+            <Card className="bg-card/50 backdrop-blur-sm border-orange-500/20 hover:border-orange-500/40 transition-colors">
               <CardContent className="p-6 text-center">
-                <h3 className="font-semibold text-lg mb-2">ICP Blockchain</h3>
+                <h3 className="font-semibold text-lg mb-2 text-orange-500">ICP Blockchain</h3>
                 <p className="text-sm text-muted-foreground">
                   Secure, transparent, and immutable security data storage
                 </p>
@@ -221,9 +225,9 @@ const Index = () => {
           
           {isScanning && (
             <div className="text-center space-y-4">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
-                <div className="w-4 h-4 bg-primary rounded-full animate-pulse" />
-                <span className="text-sm font-medium">Analyzing security patterns with ICP...</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400/10 rounded-full border border-yellow-400/20">
+                <div className="w-4 h-4 bg-yellow-400 rounded-full animate-pulse" />
+                <span className="text-sm font-medium text-yellow-400">Analyzing security patterns with ICP...</span>
               </div>
             </div>
           )}
