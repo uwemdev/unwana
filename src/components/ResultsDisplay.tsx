@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { AlertTriangle, Shield, CheckCircle, XCircle } from "lucide-react";
+import TransactionHistory from "./TransactionHistory";
 
 interface ScanResult {
   address: string;
@@ -47,60 +48,65 @@ export default function ResultsDisplay({ result }: ResultsDisplayProps) {
   };
 
   return (
-    <Card className="w-full max-w-3xl mx-auto glass-card">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span className="sunlight-glow">Security Analysis Results</span>
-          <Badge className={`${getRiskColor(result.riskLevel)} flex items-center gap-2`}>
-            {getRiskIcon(result.riskLevel)}
-            {getRiskText(result.riskLevel)}
-          </Badge>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">Security Score</span>
-            <span className="text-sm font-bold">{result.score}/100</span>
+    <div className="w-full max-w-3xl mx-auto space-y-6">
+      <Card className="glass-card">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span className="sunlight-glow">Security Analysis Results</span>
+            <Badge className={`${getRiskColor(result.riskLevel)} flex items-center gap-2`}>
+              {getRiskIcon(result.riskLevel)}
+              {getRiskText(result.riskLevel)}
+            </Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium">Security Score</span>
+              <span className="text-sm font-bold">{result.score}/100</span>
+            </div>
+            <Progress value={result.score} className="h-3" />
           </div>
-          <Progress value={result.score} className="h-3" />
-        </div>
 
-        <div className="space-y-3">
-          <h4 className="font-semibold text-sm">Analyzed Address:</h4>
-          <div className="bg-muted p-3 rounded-md">
-            <code className="text-sm break-all">{result.address}</code>
-          </div>
-        </div>
-
-        {result.issues.length > 0 && (
           <div className="space-y-3">
-            <h4 className="font-semibold text-sm text-danger">Security Issues Found:</h4>
-            <ul className="space-y-2">
-              {result.issues.map((issue, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm">
-                  <XCircle className="h-4 w-4 text-danger mt-0.5 flex-shrink-0" />
-                  {issue}
-                </li>
-              ))}
-            </ul>
+            <h4 className="font-semibold text-sm">Analyzed Address:</h4>
+            <div className="bg-muted p-3 rounded-md">
+              <code className="text-sm break-all">{result.address}</code>
+            </div>
           </div>
-        )}
 
-        {result.recommendations.length > 0 && (
-          <div className="space-y-3">
-            <h4 className="font-semibold text-sm text-primary">Recommendations:</h4>
-            <ul className="space-y-2">
-              {result.recommendations.map((rec, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm">
-                  <Shield className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                  {rec}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          {result.issues.length > 0 && (
+            <div className="space-y-3">
+              <h4 className="font-semibold text-sm text-danger">Security Issues Found:</h4>
+              <ul className="space-y-2">
+                {result.issues.map((issue, index) => (
+                  <li key={index} className="flex items-start gap-2 text-sm">
+                    <XCircle className="h-4 w-4 text-danger mt-0.5 flex-shrink-0" />
+                    {issue}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {result.recommendations.length > 0 && (
+            <div className="space-y-3">
+              <h4 className="font-semibold text-sm text-primary">Recommendations:</h4>
+              <ul className="space-y-2">
+                {result.recommendations.map((rec, index) => (
+                  <li key={index} className="flex items-start gap-2 text-sm">
+                    <Shield className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    {rec}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Transaction History for Wallet Addresses */}
+      <TransactionHistory address={result.address} type={result.type} />
+    </div>
   );
 }

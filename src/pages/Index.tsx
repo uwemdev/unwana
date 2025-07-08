@@ -4,7 +4,8 @@ import ScannerForm from "@/components/ScannerForm";
 import ResultsDisplay from "@/components/ResultsDisplay";
 import WalletConnection from "@/components/WalletConnection";
 import ScanHistory from "@/components/ScanHistory";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useScanHistory } from "@/hooks/useScanHistory";
 import logoImage from "/lovable-uploads/372289b9-f24a-4330-b95c-b5cfb3c7c5af.png";
 
@@ -235,8 +236,22 @@ const Index = () => {
             </div>
           )}
 
-          {/* Scan History Section */}
-          <ScanHistory currentScanId={currentScanId} />
+          {/* Recent Scans Preview */}
+          {scanResult && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Community Activity</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  See what the community is saying about this scan and others.
+                </p>
+                <Button asChild>
+                  <a href="/community">View Full Community Feed</a>
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </section>
     </div>
