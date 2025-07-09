@@ -69,22 +69,32 @@ export const ICPWalletProvider = ({ children }: ICPWalletProviderProps) => {
 
   const handleUserLogin = async (walletAddress: string) => {
     try {
-      // Set up Supabase auth session using the wallet address as custom auth
-      const { error: authError } = await supabase.auth.signInAnonymously({
-        options: {
-          data: {
-            wallet_address: walletAddress,
-            wallet_type: "icp"
-          }
-        }
+      // Set up Supabase auth session using the wallet address as user ID
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email: `${walletAddress}@icp.wallet`,
+        password: walletAddress, // Use wallet address as password for simplicity
       });
 
       if (authError) {
-        console.error("Auth error:", authError);
-        // Continue without Supabase auth for now
+        // Try to sign up if login fails
+        const { error: signUpError } = await supabase.auth.signUp({
+          email: `${walletAddress}@icp.wallet`,
+          password: walletAddress,
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: {
+              wallet_address: walletAddress,
+              wallet_type: "icp"
+            }
+          }
+        });
+
+        if (signUpError) {
+          console.error("SignUp error:", signUpError);
+        }
       }
 
-      // Check if user exists
+      // Check if user exists in our users table
       const { data: existingUser } = await supabase
         .from("users")
         .select("*")
@@ -106,20 +116,28 @@ export const ICPWalletProvider = ({ children }: ICPWalletProviderProps) => {
         setUser(newUser);
 
         // Create session log
-        await supabase.from("wallet_sessions").insert({
-          user_id: newUser.id,
-          wallet_address: walletAddress,
-          session_start: new Date().toISOString(),
-        });
+        try {
+          await supabase.from("wallet_sessions").insert({
+            user_id: newUser.id,
+            wallet_address: walletAddress,
+            session_start: new Date().toISOString(),
+          });
+        } catch (sessionError) {
+          console.error("Session creation error:", sessionError);
+        }
       } else {
         setUser(existingUser);
 
         // Create session log
-        await supabase.from("wallet_sessions").insert({
-          user_id: existingUser.id,
-          wallet_address: walletAddress,
-          session_start: new Date().toISOString(),
-        });
+        try {
+          await supabase.from("wallet_sessions").insert({
+            user_id: existingUser.id,
+            wallet_address: walletAddress,
+            session_start: new Date().toISOString(),
+          });
+        } catch (sessionError) {
+          console.error("Session creation error:", sessionError);
+        }
       }
 
     } catch (error) {
