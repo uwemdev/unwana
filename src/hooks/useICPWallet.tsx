@@ -3,6 +3,7 @@ import { AuthClient } from "@dfinity/auth-client";
 import { Identity } from "@dfinity/agent";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Session, User } from "@supabase/supabase-js";
 
 interface ICPWalletContextType {
   isConnected: boolean;
@@ -12,6 +13,7 @@ interface ICPWalletContextType {
   disconnect: () => Promise<void>;
   isLoading: boolean;
   user: any;
+  session: Session | null;
 }
 
 const ICPWalletContext = createContext<ICPWalletContextType | null>(null);
@@ -35,11 +37,79 @@ export const ICPWalletProvider = ({ children }: ICPWalletProviderProps) => {
   const [principal, setPrincipal] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     initAuth();
+    
+    // Set up Supabase auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setSession(session);
+        
+        if (session?.user && !user) {
+          // Try to find user by auth_user_id
+          const { data: userData } = await supabase
+            .from("users")
+            .select("*")
+            .eq("auth_user_id", session.user.id)
+            .maybeSingle();
+          
+          if (userData) {
+            setUser(userData);
+          }
+        } else if (!session) {
+          setUser(null);
+        }
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
+
+  // Restore ICP wallet state when Supabase session exists
+  useEffect(() => {
+    if (session && !isConnected && authClient) {
+      restoreICPSession();
+    }
+  }, [session, authClient]);
+
+  const restoreICPSession = async () => {
+    if (!authClient || !session?.user) return;
+
+    try {
+      // Check if ICP client is still authenticated
+      if (await authClient.isAuthenticated()) {
+        const identity = authClient.getIdentity();
+        const principal = identity.getPrincipal().toString();
+        
+        setIdentity(identity);
+        setPrincipal(principal);
+        setIsConnected(true);
+        
+        // Fetch user data if not already loaded
+        if (!user) {
+          const { data: userData } = await supabase
+            .from("users")
+            .select("*")
+            .eq("auth_user_id", session.user.id)
+            .maybeSingle();
+          
+          if (userData) {
+            setUser(userData);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Failed to restore ICP session:", error);
+    }
+  };
 
   const initAuth = async () => {
     try {
@@ -70,14 +140,16 @@ export const ICPWalletProvider = ({ children }: ICPWalletProviderProps) => {
   const handleUserLogin = async (walletAddress: string) => {
     try {
       // Set up Supabase auth session using the wallet address as user ID
-      const { error: authError } = await supabase.auth.signInWithPassword({
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: `${walletAddress}@icp.wallet`,
         password: walletAddress, // Use wallet address as password for simplicity
       });
 
+      let authUserId = authData?.user?.id;
+
       if (authError) {
         // Try to sign up if login fails
-        const { error: signUpError } = await supabase.auth.signUp({
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email: `${walletAddress}@icp.wallet`,
           password: walletAddress,
           options: {
@@ -91,7 +163,14 @@ export const ICPWalletProvider = ({ children }: ICPWalletProviderProps) => {
 
         if (signUpError) {
           console.error("SignUp error:", signUpError);
+          return;
         }
+        authUserId = signUpData?.user?.id;
+      }
+
+      if (!authUserId) {
+        console.error("No auth user ID available");
+        return;
       }
 
       // Check if user exists in our users table
@@ -102,12 +181,13 @@ export const ICPWalletProvider = ({ children }: ICPWalletProviderProps) => {
         .maybeSingle();
 
       if (!existingUser) {
-        // Create new user
+        // Create new user with auth_user_id link
         const { data: newUser, error } = await supabase
           .from("users")
           .insert({
             wallet_address: walletAddress,
             wallet_type: "icp",
+            auth_user_id: authUserId,
           })
           .select()
           .single();
@@ -126,7 +206,19 @@ export const ICPWalletProvider = ({ children }: ICPWalletProviderProps) => {
           console.error("Session creation error:", sessionError);
         }
       } else {
-        setUser(existingUser);
+        // Update existing user with auth_user_id if missing
+        if (!existingUser.auth_user_id) {
+          const { data: updatedUser } = await supabase
+            .from("users")
+            .update({ auth_user_id: authUserId })
+            .eq("id", existingUser.id)
+            .select()
+            .single();
+          
+          setUser(updatedUser || existingUser);
+        } else {
+          setUser(existingUser);
+        }
 
         // Create session log
         try {
@@ -201,11 +293,17 @@ export const ICPWalletProvider = ({ children }: ICPWalletProviderProps) => {
           .is("session_end", null);
       }
 
+      // Sign out from Supabase
+      await supabase.auth.signOut();
+      
+      // Logout from ICP
       await authClient.logout();
+      
       setIsConnected(false);
       setIdentity(null);
       setPrincipal(null);
       setUser(null);
+      setSession(null);
       
       toast({
         title: "Wallet Disconnected",
@@ -229,6 +327,7 @@ export const ICPWalletProvider = ({ children }: ICPWalletProviderProps) => {
     disconnect,
     isLoading,
     user,
+    session,
   };
 
   return (
