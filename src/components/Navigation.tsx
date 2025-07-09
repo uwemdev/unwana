@@ -10,10 +10,18 @@ import {
   Scale,
   FileWarning,
   Menu,
-  X
+  X,
+  ChevronDown,
+  User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import WalletConnection from "@/components/WalletConnection";
 import { useICPWallet } from "@/hooks/useICPWallet";
 import logoImage from "/lovable-uploads/372289b9-f24a-4330-b95c-b5cfb3c7c5af.png";
@@ -21,14 +29,14 @@ import logoImage from "/lovable-uploads/372289b9-f24a-4330-b95c-b5cfb3c7c5af.png
 const menuItems = [
   { title: "Home", url: "/", icon: Home },
   { title: "Community", url: "/community", icon: Users },
-  { title: "Analytics", url: "/analytics", icon: BarChart3 },
-  { title: "Reports", url: "/reports", icon: FileText },
-  { title: "Results", url: "/results", icon: FileText },
-  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
-const legalItems = [
-  { title: "About Us", url: "/about", icon: Info },
+const analyticsItems = [
+  { title: "Reports", url: "/reports", icon: FileText },
+  { title: "Results", url: "/results", icon: FileText },
+];
+
+const aboutItems = [
   { title: "Terms of Use", url: "/terms", icon: FileWarning },
   { title: "Copyright", url: "/copyright", icon: Scale },
 ];
@@ -42,6 +50,7 @@ export function Navigation() {
 
   const NavItems = ({ mobile = false }: { mobile?: boolean }) => (
     <>
+      {/* Regular menu items */}
       {menuItems.map((item) => (
         <NavLink
           key={item.title}
@@ -59,10 +68,138 @@ export function Navigation() {
           {item.title}
         </NavLink>
       ))}
-      {legalItems.map((item) => (
+
+      {/* Analytics dropdown */}
+      {mobile ? (
+        <>
+          <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 py-2">
+            Analytics
+          </div>
+          {analyticsItems.map((item) => (
+            <NavLink
+              key={item.title}
+              to={item.url}
+              onClick={() => setIsOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-6 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                }`
+              }
+            >
+              <item.icon className="h-4 w-4" />
+              {item.title}
+            </NavLink>
+          ))}
+        </>
+      ) : (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent"
+            >
+              <BarChart3 className="h-4 w-4" />
+              Analytics
+              <ChevronDown className="h-3 w-3" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-48">
+            {analyticsItems.map((item) => (
+              <DropdownMenuItem key={item.title} asChild>
+                <NavLink
+                  to={item.url}
+                  className="flex items-center gap-2 w-full cursor-pointer"
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.title}
+                </NavLink>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+
+      {/* About Us dropdown */}
+      {mobile ? (
+        <>
+          <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 py-2">
+            About Us
+          </div>
+          {aboutItems.map((item) => (
+            <NavLink
+              key={item.title}
+              to={item.url}
+              onClick={() => setIsOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-6 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                }`
+              }
+            >
+              <item.icon className="h-4 w-4" />
+              {item.title}
+            </NavLink>
+          ))}
+          <NavLink
+            to="/about"
+            onClick={() => setIsOpen(false)}
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-6 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
+              }`
+            }
+          >
+            <Info className="h-4 w-4" />
+            About Us
+          </NavLink>
+        </>
+      ) : (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent"
+            >
+              <Info className="h-4 w-4" />
+              About Us
+              <ChevronDown className="h-3 w-3" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-48">
+            <DropdownMenuItem asChild>
+              <NavLink
+                to="/about"
+                className="flex items-center gap-2 w-full cursor-pointer"
+              >
+                <Info className="h-4 w-4" />
+                About Us
+              </NavLink>
+            </DropdownMenuItem>
+            {aboutItems.map((item) => (
+              <DropdownMenuItem key={item.title} asChild>
+                <NavLink
+                  to={item.url}
+                  className="flex items-center gap-2 w-full cursor-pointer"
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.title}
+                </NavLink>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+
+      {/* Profile - only show when wallet is connected */}
+      {isConnected && (
         <NavLink
-          key={item.title}
-          to={item.url}
+          to="/settings"
           onClick={() => mobile && setIsOpen(false)}
           className={({ isActive }) =>
             `flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -72,10 +209,10 @@ export function Navigation() {
             }`
           }
         >
-          <item.icon className="h-4 w-4" />
-          {item.title}
+          <User className="h-4 w-4" />
+          Profile
         </NavLink>
-      ))}
+      )}
     </>
   );
 
