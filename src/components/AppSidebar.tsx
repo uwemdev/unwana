@@ -46,12 +46,12 @@ export function AppSidebar() {
 
   return (
     <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3">
+      <SidebarHeader className="p-3 md:p-4">
+        <div className="flex items-center gap-2 md:gap-3">
           {!isCollapsed && (
-            <div>
-              <h2 className="text-lg font-bold text-primary">ICP Scanner</h2>
-              <p className="text-xs text-muted-foreground">Security Suite</p>
+            <div className="min-w-0">
+              <h2 className="text-base md:text-lg font-bold text-primary truncate">ICP Scanner</h2>
+              <p className="text-xs text-muted-foreground truncate">Security Suite</p>
             </div>
           )}
         </div>
@@ -59,7 +59,7 @@ export function AppSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Main</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-xs md:text-sm">Main</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
@@ -69,9 +69,9 @@ export function AppSidebar() {
                     isActive={isActive(item.url)}
                     tooltip={isCollapsed ? item.title : undefined}
                   >
-                    <NavLink to={item.url} className="flex items-center gap-3">
-                      <item.icon className="h-4 w-4" />
-                      {!isCollapsed && <span>{item.title}</span>}
+                    <NavLink to={item.url} className="flex items-center gap-2 md:gap-3 min-w-0">
+                      <item.icon className="h-4 w-4 flex-shrink-0" />
+                      {!isCollapsed && <span className="truncate text-sm">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -81,7 +81,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Legal</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-xs md:text-sm">Legal</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {legalItems.map((item) => (
@@ -91,9 +91,9 @@ export function AppSidebar() {
                     isActive={isActive(item.url)}
                     tooltip={isCollapsed ? item.title : undefined}
                   >
-                    <NavLink to={item.url} className="flex items-center gap-3">
-                      <item.icon className="h-4 w-4" />
-                      {!isCollapsed && <span>{item.title}</span>}
+                    <NavLink to={item.url} className="flex items-center gap-2 md:gap-3 min-w-0">
+                      <item.icon className="h-4 w-4 flex-shrink-0" />
+                      {!isCollapsed && <span className="truncate text-sm">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

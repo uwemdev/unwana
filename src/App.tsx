@@ -29,11 +29,11 @@ const App = () => (
             <div className="min-h-screen flex w-full">
               <AppSidebar />
               <SidebarInset className="flex-1">
-                <header className="h-12 flex items-center border-b px-4">
-                  <SidebarTrigger />
-                  <h1 className="ml-4 font-semibold text-foreground">ICP Security Scanner</h1>
+                <header className="h-12 md:h-14 flex items-center border-b px-3 md:px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                  <SidebarTrigger className="mr-2" />
+                  <h1 className="text-sm md:text-base font-semibold text-foreground truncate">ICP Security Scanner</h1>
                 </header>
-                <main className="flex-1">
+                <main className="flex-1 overflow-x-hidden">
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/community" element={<Community />} />
