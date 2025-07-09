@@ -71,12 +71,12 @@ serve(async (req) => {
     ]
 
     // Analyze content for red flags
-    let isFllagged = false
+    let isFlagged = false
     let riskScore = 25 // Base score
 
     if (inputValue.toLowerCase().includes('scam') || inputValue.toLowerCase().includes('fake')) {
       detectedKeywords.push('scam', 'fake')
-      isFllagged = true
+      isFlagged = true
       riskScore = 85
     } else if (inputValue.toLowerCase().includes('test') || inputValue.length < 10) {
       detectedKeywords.push('suspicious')
@@ -104,7 +104,7 @@ serve(async (req) => {
         result_summary: resultSummary,
         submitted_by: userId,
         google_snippets: searchResults,
-        is_flagged: isFllagged,
+        is_flagged: isFlagged,
         scan_status: scanStatus,
         flagged_keywords: detectedKeywords,
         risk_score: riskScore
