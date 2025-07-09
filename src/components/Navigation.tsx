@@ -232,12 +232,7 @@ export function Navigation() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
             <NavItems />
-            <div className="flex items-center space-x-4 ml-4 pl-4 border-l border-border">
-              {isConnected && user?.display_name && (
-                <span className="text-sm text-muted-foreground">
-                  Hi, {user.display_name}
-                </span>
-              )}
+            <div className="flex items-center ml-4 pl-4 border-l border-border">
               <WalletConnection />
             </div>
           </div>
@@ -262,15 +257,10 @@ export function Navigation() {
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
-                  {isConnected && user?.display_name && (
-                    <div className="text-sm text-muted-foreground mb-4">
-                      Hi, {user.display_name}
-                    </div>
-                  )}
                   <div className="flex flex-col space-y-2 mb-4">
                     <NavItems mobile />
                   </div>
-                  <div className="mt-auto">
+                  <div className="mt-auto pt-4 border-t border-border">
                     <WalletConnection />
                   </div>
                 </div>

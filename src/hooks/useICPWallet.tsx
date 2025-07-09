@@ -84,7 +84,7 @@ export const ICPWalletProvider = ({ children }: ICPWalletProviderProps) => {
     if (session && !isConnected && authClient) {
       restoreICPSession();
     }
-  }, [session, authClient]);
+  }, [session, authClient, isConnected]);
 
   const restoreICPSession = async () => {
     if (!authClient || !session?.user) return;
@@ -111,9 +111,20 @@ export const ICPWalletProvider = ({ children }: ICPWalletProviderProps) => {
             setUser(userData);
           }
         }
+      } else {
+        // If ICP client is not authenticated, clear the session
+        setIsConnected(false);
+        setIdentity(null);
+        setPrincipal(null);
+        setUser(null);
       }
     } catch (error) {
       console.error("Failed to restore ICP session:", error);
+      // Clear state on error
+      setIsConnected(false);
+      setIdentity(null);
+      setPrincipal(null);
+      setUser(null);
     }
   };
 
