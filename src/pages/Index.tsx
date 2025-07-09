@@ -2,11 +2,10 @@
 import { useState } from "react";
 import ScannerForm from "@/components/ScannerForm";
 import ResultsDisplay from "@/components/ResultsDisplay";
-import WalletConnection from "@/components/WalletConnection";
 import ScanHistory from "@/components/ScanHistory";
+import LatestResults from "@/components/LatestResults";
 import { Card, CardContent } from "@/components/ui/card";
 import { useScanHistory } from "@/hooks/useScanHistory";
-import logoImage from "/lovable-uploads/372289b9-f24a-4330-b95c-b5cfb3c7c5af.png";
 
 interface ScanResult {
   address: string;
@@ -164,13 +163,6 @@ const Index = () => {
       {/* Hero Section */}
       <section className="text-center space-y-6 md:space-y-8">
         <div className="space-y-4 md:space-y-6">
-          <div className="flex items-center justify-center">
-            <img 
-              src={logoImage} 
-              alt="Unwana Logo" 
-              className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40"
-            />
-          </div>
           <div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
               Welcome to Unwana
@@ -211,10 +203,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Wallet Connection Section */}
-      <section>
-        <WalletConnection />
-      </section>
 
       {/* Scanner Section */}
       <section className="space-y-6 md:space-y-8">
@@ -235,8 +223,8 @@ const Index = () => {
             </div>
           )}
 
-          {/* Scan History Section */}
-          <ScanHistory currentScanId={currentScanId} />
+          {/* Latest Results Section */}
+          <LatestResults />
       </section>
     </div>
   );

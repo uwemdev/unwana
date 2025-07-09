@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Community from "./pages/Community";
 import Analytics from "./pages/Analytics";
 import Reports from "./pages/Reports";
+import Results from "./pages/Results";
 import Settings from "./pages/Settings";
 import About from "./pages/About";
 import Terms from "./pages/Terms";
@@ -32,6 +33,7 @@ const App = () => (
                 <Route path="/community" element={<Community />} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/reports" element={<Reports />} />
+                <Route path="/results" element={<Results />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/terms" element={<Terms />} />

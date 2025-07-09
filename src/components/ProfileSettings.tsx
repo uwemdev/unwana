@@ -52,11 +52,46 @@ export function ProfileSettings() {
     }
   };
 
+  const validateUsername = (username: string) => {
+    const trimmed = username.trim();
+    
+    // Length validation
+    if (trimmed.length < 3 || trimmed.length > 7) {
+      return "Username must be between 3-7 characters";
+    }
+    
+    // Special characters validation
+    if (!/^[a-zA-Z0-9_]+$/.test(trimmed)) {
+      return "Username can only contain letters, numbers, and underscores";
+    }
+    
+    // Blocked usernames
+    const blockedUsernames = ['admin', 'root', 'user', 'test', 'null', 'void', 'api', 'www', 'ftp', 'mail'];
+    if (blockedUsernames.includes(trimmed.toLowerCase())) {
+      return "This username is not allowed";
+    }
+    
+    return null;
+  };
+
   const updateProfile = async () => {
     if (!user) return;
 
     try {
       setLoading(true);
+
+      // Validate display_name if it's being used as username
+      if (profile.display_name) {
+        const usernameError = validateUsername(profile.display_name);
+        if (usernameError) {
+          toast({
+            title: "Invalid Username",
+            description: usernameError,
+            variant: "destructive",
+          });
+          return;
+        }
+      }
 
       const { error } = await supabase
         .from("users")
@@ -135,13 +170,17 @@ export function ProfileSettings() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="display_name">Display Name</Label>
+            <Label htmlFor="display_name">Username (3-7 characters)</Label>
             <Input
               id="display_name"
-              placeholder="Enter your display name"
+              placeholder="Enter your username"
               value={profile.display_name}
               onChange={(e) => setProfile(prev => ({ ...prev, display_name: e.target.value }))}
+              maxLength={7}
             />
+            <p className="text-xs text-muted-foreground">
+              Only letters, numbers, and underscores allowed. No special names like 'admin', 'root', etc.
+            </p>
           </div>
 
           <div className="space-y-2">

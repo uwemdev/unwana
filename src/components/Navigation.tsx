@@ -14,12 +14,16 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import WalletConnection from "@/components/WalletConnection";
+import { useICPWallet } from "@/hooks/useICPWallet";
+import logoImage from "/lovable-uploads/372289b9-f24a-4330-b95c-b5cfb3c7c5af.png";
 
 const menuItems = [
   { title: "Home", url: "/", icon: Home },
   { title: "Community", url: "/community", icon: Users },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Reports", url: "/reports", icon: FileText },
+  { title: "Results", url: "/results", icon: FileText },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
@@ -32,6 +36,7 @@ const legalItems = [
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { user, isConnected } = useICPWallet();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -80,12 +85,24 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <h1 className="text-xl font-bold text-primary">Unwana</h1>
+            <img 
+              src={logoImage} 
+              alt="Unwana Logo" 
+              className="w-8 h-8 sm:w-10 sm:h-10"
+            />
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
             <NavItems />
+            <div className="flex items-center space-x-4 ml-4 pl-4 border-l border-border">
+              {isConnected && user?.display_name && (
+                <span className="text-sm text-muted-foreground">
+                  Hi, {user.display_name}
+                </span>
+              )}
+              <WalletConnection />
+            </div>
           </div>
 
           {/* Mobile Navigation */}
@@ -99,13 +116,25 @@ export function Navigation() {
               <SheetContent side="left" className="w-64">
                 <div className="flex flex-col space-y-4 pt-6">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-bold text-primary">Unwana</h2>
+                    <img 
+                      src={logoImage} 
+                      alt="Unwana Logo" 
+                      className="w-8 h-8"
+                    />
                     <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)}>
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
-                  <div className="flex flex-col space-y-2">
+                  {isConnected && user?.display_name && (
+                    <div className="text-sm text-muted-foreground mb-4">
+                      Hi, {user.display_name}
+                    </div>
+                  )}
+                  <div className="flex flex-col space-y-2 mb-4">
                     <NavItems mobile />
+                  </div>
+                  <div className="mt-auto">
+                    <WalletConnection />
                   </div>
                 </div>
               </SheetContent>
