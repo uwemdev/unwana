@@ -237,7 +237,6 @@ const Index = () => {
 
           {/* Scan History Section */}
           <ScanHistory currentScanId={currentScanId} />
-        </div>
       </section>
     </div>
   );
