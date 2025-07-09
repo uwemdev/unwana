@@ -45,20 +45,26 @@ export const ICPWalletProvider = ({ children }: ICPWalletProviderProps) => {
     
     // Set up Supabase auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setSession(session);
         
         if (session?.user && !user) {
-          // Try to find user by auth_user_id
-          const { data: userData } = await supabase
-            .from("users")
-            .select("*")
-            .eq("auth_user_id", session.user.id)
-            .maybeSingle();
-          
-          if (userData) {
-            setUser(userData);
-          }
+          // Defer async operations to avoid blocking
+          setTimeout(async () => {
+            try {
+              const { data: userData } = await supabase
+                .from("users")
+                .select("*")
+                .eq("auth_user_id", session.user.id)
+                .maybeSingle();
+              
+              if (userData) {
+                setUser(userData);
+              }
+            } catch (error) {
+              console.error("Error fetching user data:", error);
+            }
+          }, 0);
         } else if (!session) {
           setUser(null);
         }
@@ -71,7 +77,7 @@ export const ICPWalletProvider = ({ children }: ICPWalletProviderProps) => {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [user]);
 
   // Restore ICP wallet state when Supabase session exists
   useEffect(() => {
