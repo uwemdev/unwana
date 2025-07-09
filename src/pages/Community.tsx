@@ -19,10 +19,15 @@ import {
   CheckCircle,
   Send,
   Heart,
-  MoreHorizontal
+  MoreHorizontal,
+  Search,
+  Plus,
+  PenTool
 } from "lucide-react";
 import { useScanHistory } from "@/hooks/useScanHistory";
+import { usePosts } from "@/hooks/usePosts";
 import { useICPWallet } from "@/hooks/useICPWallet";
+import { PostContent } from "@/components/PostContent";
 import { formatDistanceToNow } from "date-fns";
 
 interface Comment {
@@ -39,11 +44,17 @@ interface Comment {
 
 const Community = () => {
   const { scanHistory, votes, comments, loading, fetchScanHistory, fetchVotes, fetchComments, submitVote, submitComment } = useScanHistory();
+  const { posts, postComments, loading: postsLoading, createPost, likePost, fetchPostComments, createPostComment } = usePosts();
   const { user, isConnected } = useICPWallet();
   const [sortBy, setSortBy] = useState("recent");
   const [filterBy, setFilterBy] = useState("all");
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const [newComment, setNewComment] = useState<{[key: string]: string}>({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [newPostContent, setNewPostContent] = useState("");
+  const [showCreatePost, setShowCreatePost] = useState(false);
+  const [expandedPostComments, setExpandedPostComments] = useState<Set<string>>(new Set());
+  const [newPostComment, setNewPostComment] = useState<{[key: string]: string}>({});
 
   useEffect(() => {
     fetchScanHistory();
@@ -113,8 +124,9 @@ const Community = () => {
 
   const filteredAndSortedScans = scanHistory
     .filter(scan => {
-      if (filterBy === "all") return true;
-      return scan.scan_status === filterBy;
+      if (filterBy !== "all" && scan.scan_status !== filterBy) return false;
+      if (searchQuery && !scan.input_value.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      return true;
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -131,71 +143,102 @@ const Community = () => {
       }
     });
 
-  if (loading) {
+  const handleCreatePost = async () => {
+    if (!newPostContent.trim()) return;
+    await createPost(newPostContent);
+    setNewPostContent("");
+    setShowCreatePost(false);
+  };
+
+  const handlePostComment = async (postId: string) => {
+    const comment = newPostComment[postId];
+    if (!comment?.trim()) return;
+    
+    await createPostComment(postId, comment);
+    setNewPostComment(prev => ({ ...prev, [postId]: "" }));
+  };
+
+  const togglePostComments = (postId: string) => {
+    const newExpanded = new Set(expandedPostComments);
+    if (newExpanded.has(postId)) {
+      newExpanded.delete(postId);
+    } else {
+      newExpanded.add(postId);
+      fetchPostComments(postId);
+    }
+    setExpandedPostComments(newExpanded);
+  };
+
+  if (loading || postsLoading) {
     return (
-      <div className="container mx-auto p-3 md:p-6">
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading community data...</p>
-        </div>
+      <div className="text-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+        <p className="text-muted-foreground">Loading community data...</p>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-4 md:space-y-6 max-w-7xl">
-      <div className="text-center space-y-2 md:space-y-4">
-        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground">Community Security Hub</h1>
-        <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto px-2">
-          Join our community-driven security network. Share scans, vote on threats, and help protect the ICP ecosystem.
+    <div className="space-y-6">
+      <div className="text-center space-y-4">
+        <h1 className="text-2xl md:text-3xl font-bold">Community Hub</h1>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
+          Join our community-driven security network. Share insights, vote on threats, and help protect the ecosystem.
         </p>
       </div>
 
-      {/* Filters and Sort */}
-      <Card>
-        <CardHeader className="pb-3 md:pb-6">
-          <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-            <Filter className="h-4 w-4 md:h-5 md:w-5" />
-            Filter & Sort
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-            <div className="space-y-2">
-              <label className="text-xs md:text-sm font-medium block">Sort by</label>
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="h-9 md:h-10 text-sm">
-                  <SelectValue placeholder="Sort by..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="recent">Most Recent</SelectItem>
-                  <SelectItem value="oldest">Oldest First</SelectItem>
-                  <SelectItem value="risk-high">High Risk First</SelectItem>
-                  <SelectItem value="risk-low">Low Risk First</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <label className="text-xs md:text-sm font-medium block">Filter by Status</label>
-              <Select value={filterBy} onValueChange={setFilterBy}>
-                <SelectTrigger className="h-9 md:h-10 text-sm">
-                  <SelectValue placeholder="Filter by..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Scans</SelectItem>
-                  <SelectItem value="safe">Safe Only</SelectItem>
-                  <SelectItem value="scam">Scam Only</SelectItem>
-                  <SelectItem value="suspicious">Suspicious Only</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="scans" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="scans">Security Scans</TabsTrigger>
+          <TabsTrigger value="posts">Community Posts</TabsTrigger>
+        </TabsList>
 
-      {/* Scan Results */}
-      <div className="space-y-4">
+        <TabsContent value="scans" className="space-y-4">
+          {/* Search and Filters */}
+          <Card>
+            <CardContent className="p-4">
+              <div className="space-y-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search scans..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Select value={sortBy} onValueChange={setSortBy}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sort by..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="recent">Most Recent</SelectItem>
+                      <SelectItem value="oldest">Oldest First</SelectItem>
+                      <SelectItem value="risk-high">High Risk First</SelectItem>
+                      <SelectItem value="risk-low">Low Risk First</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  
+                  <Select value={filterBy} onValueChange={setFilterBy}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Filter by status..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Scans</SelectItem>
+                      <SelectItem value="safe">Safe Only</SelectItem>
+                      <SelectItem value="scam">Scam Only</SelectItem>
+                      <SelectItem value="suspicious">Suspicious Only</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Scan Results */}
+          <div className="space-y-4">
         {filteredAndSortedScans.map((scan) => {
           const voteCounts = getVoteCounts(scan.id);
           const scanComments = getScanComments(scan.id);
@@ -351,23 +394,182 @@ const Community = () => {
               </CardContent>
             </Card>
           );
-        })}
-      </div>
+          })}
+          
+          {filteredAndSortedScans.length === 0 && (
+            <Card className="text-center py-8">
+              <CardContent>
+                <Shield className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-medium mb-2">No scans found</h3>
+                <p className="text-muted-foreground">
+                  {filterBy === "all" 
+                    ? "No scans match your search criteria."
+                    : `No ${filterBy} scans found. Try adjusting your filters.`
+                  }
+                </p>
+              </CardContent>
+            </Card>
+          )}
+          </div>
+        </TabsContent>
 
-      {filteredAndSortedScans.length === 0 && (
-        <Card className="text-center py-8 md:py-12">
-          <CardContent>
-            <Shield className="h-8 w-8 md:h-12 md:w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-base md:text-lg font-medium mb-2">No scans found</h3>
-            <p className="text-sm md:text-base text-muted-foreground px-4">
-              {filterBy === "all" 
-                ? "No scans have been performed yet. Start by scanning an address on the home page."
-                : `No ${filterBy} scans found. Try adjusting your filters.`
-              }
-            </p>
-          </CardContent>
-        </Card>
-      )}
+        <TabsContent value="posts" className="space-y-4">
+          {/* Create Post */}
+          {isConnected && (
+            <Card>
+              <CardContent className="p-4">
+                {!showCreatePost ? (
+                  <Button 
+                    onClick={() => setShowCreatePost(true)}
+                    className="w-full"
+                    variant="outline"
+                  >
+                    <PenTool className="h-4 w-4 mr-2" />
+                    Share your thoughts with the community...
+                  </Button>
+                ) : (
+                  <div className="space-y-4">
+                    <Textarea
+                      placeholder="What's on your mind? Use @ for mentions and # for hashtags..."
+                      value={newPostContent}
+                      onChange={(e) => setNewPostContent(e.target.value)}
+                      className="min-h-[100px]"
+                    />
+                    <div className="flex gap-2">
+                      <Button onClick={handleCreatePost} disabled={!newPostContent.trim()}>
+                        Post
+                      </Button>
+                      <Button variant="outline" onClick={() => setShowCreatePost(false)}>
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Posts Feed */}
+          <div className="space-y-4">
+            {posts.map((post) => {
+              const isCommentsExpanded = expandedPostComments.has(post.id);
+              const postCommentsForPost = postComments.filter(c => c.post_id === post.id);
+              
+              return (
+                <Card key={post.id}>
+                  <CardContent className="p-4">
+                    <div className="space-y-4">
+                      {/* Post Header */}
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback>
+                              {post.users.display_name?.charAt(0) || post.users.username.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium text-sm">
+                              {post.users.display_name || post.users.username}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Post Content */}
+                      <div className="text-sm">
+                        <PostContent content={post.content} />
+                      </div>
+
+                      {/* Post Actions */}
+                      <div className="flex items-center gap-4">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => likePost(post.id)}
+                          disabled={!isConnected}
+                          className="gap-2"
+                        >
+                          <Heart className="h-4 w-4" />
+                          {post.likes_count}
+                        </Button>
+                        
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => togglePostComments(post.id)}
+                          className="gap-2"
+                        >
+                          <MessageCircle className="h-4 w-4" />
+                          {post.comments_count}
+                        </Button>
+                      </div>
+
+                      {/* Comments Section */}
+                      {isCommentsExpanded && (
+                        <div className="space-y-3 border-t pt-4">
+                          {postCommentsForPost.map((comment) => (
+                            <div key={comment.id} className="flex gap-3">
+                              <Avatar className="h-6 w-6">
+                                <AvatarFallback className="text-xs">
+                                  {comment.users.display_name?.charAt(0) || comment.users.username.charAt(0)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1">
+                                <div className="bg-muted rounded-lg p-3">
+                                  <p className="text-xs font-medium mb-1">
+                                    {comment.users.display_name || comment.users.username}
+                                  </p>
+                                  <PostContent content={comment.content} />
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+
+                          {isConnected && (
+                            <div className="flex gap-2">
+                              <Textarea
+                                placeholder="Write a comment..."
+                                value={newPostComment[post.id] || ""}
+                                onChange={(e) => setNewPostComment(prev => ({ ...prev, [post.id]: e.target.value }))}
+                                className="min-h-[60px] text-sm"
+                              />
+                              <Button
+                                size="sm"
+                                onClick={() => handlePostComment(post.id)}
+                                disabled={!newPostComment[post.id]?.trim()}
+                              >
+                                <Send className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+
+            {posts.length === 0 && (
+              <Card className="text-center py-8">
+                <CardContent>
+                  <MessageCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2">No posts yet</h3>
+                  <p className="text-muted-foreground">
+                    Be the first to share something with the community!
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

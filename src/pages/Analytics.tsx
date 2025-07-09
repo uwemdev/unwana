@@ -1,52 +1,136 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BarChart3, TrendingUp, TrendingDown, Shield, AlertTriangle, Users } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Analytics = () => {
-  // Mock analytics data
-  const stats = [
+  const [stats, setStats] = useState([
     {
       title: "Total Scans",
-      value: "12,458",
-      change: "+12%",
+      value: "0",
+      change: "0%",
       trend: "up",
       icon: BarChart3,
     },
     {
       title: "Scams Detected",
-      value: "3,241",
-      change: "+8%",
+      value: "0",
+      change: "0%",
       trend: "up",
       icon: AlertTriangle,
     },
     {
       title: "Safe Addresses",
-      value: "8,917",
-      change: "+15%",
+      value: "0",
+      change: "0%",
       trend: "up",
       icon: Shield,
     },
     {
       title: "Active Users",
-      value: "2,145",
-      change: "+23%",
+      value: "0",
+      change: "0%",
       trend: "up",
       icon: Users,
     },
-  ];
+  ]);
 
-  const recentTrends = [
-    { type: "DeFi Scams", count: 45, change: "+12%" },
-    { type: "Phishing Sites", count: 32, change: "-5%" },
-    { type: "Rug Pulls", count: 28, change: "+8%" },
-    { type: "Fake Tokens", count: 67, change: "+18%" },
-  ];
+  const [recentTrends, setRecentTrends] = useState([
+    { type: "DeFi Scams", count: 0, change: "0%" },
+    { type: "Phishing Sites", count: 0, change: "0%" },
+    { type: "Rug Pulls", count: 0, change: "0%" },
+    { type: "Fake Tokens", count: 0, change: "0%" },
+  ]);
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, []);
+
+  const fetchAnalytics = async () => {
+    try {
+      // Fetch total scans
+      const { count: totalScans } = await supabase
+        .from("search_results")
+        .select("*", { count: "exact", head: true });
+
+      // Fetch scams detected
+      const { count: scamsDetected } = await supabase
+        .from("search_results")
+        .select("*", { count: "exact", head: true })
+        .eq("scan_status", "scam");
+
+      // Fetch safe addresses
+      const { count: safeAddresses } = await supabase
+        .from("search_results")
+        .select("*", { count: "exact", head: true })
+        .eq("scan_status", "safe");
+
+      // Fetch active users
+      const { count: activeUsers } = await supabase
+        .from("users")
+        .select("*", { count: "exact", head: true });
+
+      // Update stats
+      setStats([
+        {
+          title: "Total Scans",
+          value: totalScans?.toString() || "0",
+          change: "0%",
+          trend: "up" as const,
+          icon: BarChart3,
+        },
+        {
+          title: "Scams Detected",
+          value: scamsDetected?.toString() || "0",
+          change: "0%",
+          trend: "up" as const,
+          icon: AlertTriangle,
+        },
+        {
+          title: "Safe Addresses",
+          value: safeAddresses?.toString() || "0",
+          change: "0%",
+          trend: "up" as const,
+          icon: Shield,
+        },
+        {
+          title: "Active Users",
+          value: activeUsers?.toString() || "0",
+          change: "0%",
+          trend: "up" as const,
+          icon: Users,
+        },
+      ]);
+
+      // Fetch scan status breakdown for trends
+      const { data: scansByType } = await supabase
+        .from("search_results")
+        .select("input_type, scan_status");
+
+      if (scansByType) {
+        const tokenScams = scansByType.filter(s => s.input_type === 'token' && s.scan_status === 'scam').length;
+        const dappScams = scansByType.filter(s => s.input_type === 'dapp' && s.scan_status === 'scam').length;
+        const walletScams = scansByType.filter(s => s.input_type === 'wallet' && s.scan_status === 'scam').length;
+        const suspiciousWallets = scansByType.filter(s => s.input_type === 'wallet' && s.scan_status === 'suspicious').length;
+
+        setRecentTrends([
+          { type: "Token Scams", count: tokenScams, change: "0%" },
+          { type: "DApp Threats", count: dappScams, change: "0%" },
+          { type: "Wallet Scams", count: walletScams, change: "0%" },
+          { type: "Suspicious Activity", count: suspiciousWallets, change: "0%" },
+        ]);
+      }
+    } catch (error) {
+      console.error("Error fetching analytics:", error);
+    }
+  };
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
+    <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Security Analytics</h1>
-        <p className="text-muted-foreground">Community security statistics and trends</p>
+        <p className="text-muted-foreground">Real-time community security statistics and trends</p>
       </div>
 
       {/* Stats Grid */}
@@ -91,8 +175,8 @@ const Analytics = () => {
                 </div>
                 <div className="text-right">
                   <p className="text-2xl font-bold">{trend.count}</p>
-                  <Badge variant={trend.change.startsWith("+") ? "destructive" : "secondary"}>
-                    {trend.change}
+                  <Badge variant={trend.count > 0 ? "destructive" : "secondary"}>
+                    {trend.count > 0 ? `${trend.count} detected` : "None detected"}
                   </Badge>
                 </div>
               </div>

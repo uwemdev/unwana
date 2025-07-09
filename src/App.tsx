@@ -4,8 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ICPWalletProvider } from "@/hooks/useICPWallet";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
+import { Navigation } from "@/components/Navigation";
 import Index from "./pages/Index";
 import Community from "./pages/Community";
 import Analytics from "./pages/Analytics";
@@ -25,31 +24,23 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <SidebarProvider>
-            <div className="min-h-screen flex w-full">
-              <AppSidebar />
-              <SidebarInset className="flex-1">
-                <header className="h-12 md:h-14 flex items-center border-b px-3 md:px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                  <SidebarTrigger className="mr-2" />
-                  <h1 className="text-sm md:text-base font-semibold text-foreground truncate">ICP Security Scanner</h1>
-                </header>
-                <main className="flex-1 overflow-x-hidden">
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/community" element={<Community />} />
-                    <Route path="/analytics" element={<Analytics />} />
-                    <Route path="/reports" element={<Reports />} />
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/terms" element={<Terms />} />
-                    <Route path="/copyright" element={<Copyright />} />
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </main>
-              </SidebarInset>
-            </div>
-          </SidebarProvider>
+          <div className="min-h-screen w-full">
+            <Navigation />
+            <main className="container mx-auto px-4 py-6 max-w-7xl">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/community" element={<Community />} />
+                <Route path="/analytics" element={<Analytics />} />
+                <Route path="/reports" element={<Reports />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/copyright" element={<Copyright />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </main>
+          </div>
         </BrowserRouter>
       </TooltipProvider>
     </ICPWalletProvider>

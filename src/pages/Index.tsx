@@ -160,64 +160,64 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="space-y-8 md:space-y-12">
       {/* Hero Section */}
-      <section className="relative py-8 md:py-16 lg:py-20 px-3 md:px-4">
-        <div className="relative z-10 container mx-auto text-center space-y-6 md:space-y-8">
-          <div className="space-y-4 md:space-y-6">
-            <div className="flex items-center justify-center">
-              <img 
-                src={logoImage} 
-                alt="ICP25 Hackathon Logo" 
-                className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40"
-              />
-            </div>
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto px-2">
-              Advanced blockchain security scanner powered by ICP. Detect scams, analyze wallet behavior, and protect your crypto assets.
+      <section className="text-center space-y-6 md:space-y-8">
+        <div className="space-y-4 md:space-y-6">
+          <div className="flex items-center justify-center">
+            <img 
+              src={logoImage} 
+              alt="Unwana Logo" 
+              className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40"
+            />
+          </div>
+          <div>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+              Welcome to Unwana
+            </h1>
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+              Advanced blockchain security scanner. Detect scams, analyze wallet behavior, and protect your crypto assets with community-driven intelligence.
             </p>
           </div>
+        </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto px-2">
-            <Card className="bg-card/50 backdrop-blur-sm border-yellow-400/20 hover:border-yellow-400/40 transition-colors">
-              <CardContent className="p-4 md:p-6 text-center">
-                <h3 className="font-semibold text-base md:text-lg mb-2 text-yellow-400">Real-time Scanning</h3>
-                <p className="text-xs md:text-sm text-muted-foreground">
-                  Instant analysis of wallet addresses, token contracts, and DApps
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-card/50 backdrop-blur-sm border-amber-500/20 hover:border-amber-500/40 transition-colors">
-              <CardContent className="p-4 md:p-6 text-center">
-                <h3 className="font-semibold text-base md:text-lg mb-2 text-amber-500">Community Driven</h3>
-                <p className="text-xs md:text-sm text-muted-foreground">
-                  Powered by community reports and decentralized reputation scoring
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-card/50 backdrop-blur-sm border-orange-500/20 hover:border-orange-500/40 transition-colors">
-              <CardContent className="p-4 md:p-6 text-center">
-                <h3 className="font-semibold text-base md:text-lg mb-2 text-orange-500">ICP Blockchain</h3>
-                <p className="text-xs md:text-sm text-muted-foreground">
-                  Secure, transparent, and immutable security data storage
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto">
+          <Card className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-colors">
+            <CardContent className="p-4 md:p-6 text-center">
+              <h3 className="font-semibold text-base md:text-lg mb-2 text-primary">Real-time Scanning</h3>
+              <p className="text-xs md:text-sm text-muted-foreground">
+                Instant analysis of wallet addresses, token contracts, and DApps
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-card/50 backdrop-blur-sm border-accent/20 hover:border-accent/40 transition-colors">
+            <CardContent className="p-4 md:p-6 text-center">
+              <h3 className="font-semibold text-base md:text-lg mb-2 text-accent">Community Driven</h3>
+              <p className="text-xs md:text-sm text-muted-foreground">
+                Powered by community reports and decentralized reputation scoring
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-card/50 backdrop-blur-sm border-logo-orange/20 hover:border-logo-orange/40 transition-colors">
+            <CardContent className="p-4 md:p-6 text-center">
+              <h3 className="font-semibold text-base md:text-lg mb-2 text-logo-orange">Blockchain Security</h3>
+              <p className="text-xs md:text-sm text-muted-foreground">
+                Secure, transparent, and immutable security data storage
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
       {/* Wallet Connection Section */}
-      <section className="py-6 md:py-8 px-3 md:px-4">
-        <div className="container mx-auto">
-          <WalletConnection />
-        </div>
+      <section>
+        <WalletConnection />
       </section>
 
       {/* Scanner Section */}
-      <section className="py-8 md:py-12 px-3 md:px-4">
-        <div className="container mx-auto space-y-6 md:space-y-8">
+      <section className="space-y-6 md:space-y-8">
           <ScannerForm onScan={handleScan} isScanning={isScanning} />
           
           {isScanning && (
