@@ -396,6 +396,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_user_by_auth_uid: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       input_type: "wallet" | "token" | "dapp"

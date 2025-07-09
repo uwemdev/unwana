@@ -34,7 +34,7 @@ export function ProfileSettings() {
       const { data, error } = await supabase
         .from("users")
         .select("username, display_name, bio, avatar_url")
-        .eq("id", user.id)
+        .eq("wallet_address", user.wallet_address)
         .single();
 
       if (error) throw error;
@@ -100,9 +100,20 @@ export function ProfileSettings() {
           bio: profile.bio.trim() || null,
           avatar_url: profile.avatar_url.trim() || null,
         })
-        .eq("id", user.id);
+        .eq("wallet_address", user.wallet_address);
 
       if (error) throw error;
+
+      // Update local user state
+      const updatedUser = {
+        ...user,
+        display_name: profile.display_name.trim() || null,
+        bio: profile.bio.trim() || null,
+        avatar_url: profile.avatar_url.trim() || null,
+      };
+
+      // Re-fetch to get updated data
+      await fetchProfile();
 
       toast({
         title: "Profile Updated",
