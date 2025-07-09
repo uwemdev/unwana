@@ -269,6 +269,7 @@ export type Database = {
       }
       users: {
         Row: {
+          auth_user_id: string | null
           avatar_url: string | null
           bio: string | null
           created_at: string
@@ -280,6 +281,7 @@ export type Database = {
           wallet_type: string
         }
         Insert: {
+          auth_user_id?: string | null
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
@@ -291,6 +293,7 @@ export type Database = {
           wallet_type?: string
         }
         Update: {
+          auth_user_id?: string | null
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
@@ -393,10 +396,6 @@ export type Database = {
         Returns: number
       }
       generate_random_username: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      get_user_by_auth_uid: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
