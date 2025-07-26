@@ -55,13 +55,13 @@ const LatestResults = () => {
   const getRiskColor = (status: string) => {
     switch (status) {
       case "safe":
-        return "bg-green-500/20 text-green-700 border-green-500/30";
+        return "bg-safe/20 text-safe border-safe/30";
       case "scam":
-        return "bg-red-500/20 text-red-700 border-red-500/30";
+        return "bg-danger/20 text-danger border-danger/30";
       case "suspicious":
-        return "bg-yellow-500/20 text-yellow-700 border-yellow-500/30";
+        return "bg-warning/20 text-warning border-warning/30";
       default:
-        return "bg-gray-500/20 text-gray-700 border-gray-500/30";
+        return "bg-muted/20 text-muted-foreground border-muted/30";
     }
   };
 

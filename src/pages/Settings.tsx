@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useICPWallet } from "@/hooks/useICPWallet";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Settings = () => {
   const { user, isConnected } = useICPWallet();
@@ -36,12 +37,38 @@ const Settings = () => {
     anonymousMode: false,
   });
 
-  const handleSaveProfile = () => {
-    // Here you would update the user profile in the database
-    toast({
-      title: "Profile Updated",
-      description: "Your profile settings have been saved successfully.",
-    });
+  const handleSaveProfile = async () => {
+    if (!user || !isConnected) {
+      toast({
+        title: "Error",
+        description: "Please connect your wallet first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("users")
+        .update({
+          display_name: displayName.trim() || null,
+        })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Profile Updated",
+        description: "Your profile settings have been saved successfully.",
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update profile. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDeleteAccount = () => {

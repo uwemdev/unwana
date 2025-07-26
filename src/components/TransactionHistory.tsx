@@ -77,28 +77,28 @@ export default function TransactionHistory({ address }: TransactionHistoryProps)
   const getTransactionIcon = (type: string) => {
     switch (type) {
       case "receive":
-        return <ArrowDown className="h-4 w-4 text-green-500" />;
+        return <ArrowDown className="h-4 w-4 text-safe" />;
       case "send":
-        return <ArrowUp className="h-4 w-4 text-red-500" />;
+        return <ArrowUp className="h-4 w-4 text-danger" />;
       case "swap":
-        return <ArrowUpDown className="h-4 w-4 text-blue-500" />;
+        return <ArrowUpDown className="h-4 w-4 text-primary" />;
       case "contract":
-        return <Hash className="h-4 w-4 text-purple-500" />;
+        return <Hash className="h-4 w-4 text-accent" />;
       default:
-        return <ArrowUpDown className="h-4 w-4 text-gray-500" />;
+        return <ArrowUpDown className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmed":
-        return "bg-green-100 text-green-800 border-green-200";
+        return "bg-safe/20 text-safe border-safe/30";
       case "pending":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+        return "bg-warning/20 text-warning border-warning/30";
       case "failed":
-        return "bg-red-100 text-red-800 border-red-200";
+        return "bg-danger/20 text-danger border-danger/30";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-muted/20 text-muted-foreground border-muted/30";
     }
   };
 
@@ -181,7 +181,7 @@ export default function TransactionHistory({ address }: TransactionHistoryProps)
                   </div>
                   
                   <div className="text-right">
-                    <p className={`font-medium ${tx.type === "receive" ? "text-green-600" : "text-red-600"}`}>
+                    <p className={`font-medium ${tx.type === "receive" ? "text-safe" : "text-danger"}`}>
                       {tx.type === "receive" ? "+" : "-"}{tx.amount} {tx.token}
                     </p>
                     {tx.gasUsed && (
@@ -223,7 +223,7 @@ export default function TransactionHistory({ address }: TransactionHistoryProps)
                       </div>
                       
                       <div className="text-right">
-                        <p className={`font-medium ${tx.type === "receive" ? "text-green-600" : "text-red-600"}`}>
+                        <p className={`font-medium ${tx.type === "receive" ? "text-safe" : "text-danger"}`}>
                           {tx.type === "receive" ? "+" : "-"}{tx.amount} {tx.token}
                         </p>
                         {tx.gasUsed && (
