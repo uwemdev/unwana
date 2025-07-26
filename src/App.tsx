@@ -25,9 +25,9 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <div className="min-h-screen w-full">
+          <div className="min-h-screen w-full bg-gradient-to-br from-background to-background/80">
             <Navigation />
-            <main className="container mx-auto px-4 py-6 max-w-7xl">
+            <main className="container mx-auto px-4 py-4 max-w-7xl pb-safe">
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/community" element={<Community />} />
